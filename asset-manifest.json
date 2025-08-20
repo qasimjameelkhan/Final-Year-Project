@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/Final-Year-Project/static/css/main.7f6ad355.css",
+    "main.js": "/Final-Year-Project/static/js/main.b552ec7b.js",
+    "static/media/albert-dera-ILip77SbmOE-unsplash.jpg": "/Final-Year-Project/static/media/albert-dera-ILip77SbmOE-unsplash.d07d8e3e54cc585443be.jpg",
+    "index.html": "/Final-Year-Project/index.html",
+    "main.7f6ad355.css.map": "/Final-Year-Project/static/css/main.7f6ad355.css.map",
+    "main.b552ec7b.js.map": "/Final-Year-Project/static/js/main.b552ec7b.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.7f6ad355.css",
+    "static/js/main.b552ec7b.js"
+  ]
+}
