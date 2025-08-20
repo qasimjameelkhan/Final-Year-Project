@@ -1,4 +1,5 @@
 {
+  "homepage": "https://qasimjameelkhan.github.io/Final-Year-Project",
   "name": "user-profiles-mod",
   "version": "0.1.0",
   "private": true,
@@ -34,6 +35,8 @@
     "zustand": "^5.0.5"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -60,6 +63,7 @@
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "autoprefixer": "^10.4.21",
+    "gh-pages": "^6.3.0",
     "postcss": "^8.5.5",
     "tailwindcss": "^3.4.1"
   },
