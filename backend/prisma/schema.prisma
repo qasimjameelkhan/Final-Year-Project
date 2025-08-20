@@ -1,0 +1,151 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  userid    Int      @id @default(autoincrement())
+  email     String   @unique
+  username  String   @unique
+  type      userType
+  password  String
+  files     Json?
+  images    Json?
+  isVerifiedArtist Boolean
+  isBlocked    Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  arts      Arts[]         @relation("UserArts")
+  portfolio Portfolio[]    @relation("UserPortfolio")
+  transactions Transaction[] @relation("UserTransactions")
+  wallet    Wallet?
+  carts     Cart[]
+  orders    Order[]
+
+  // Relations for Message
+  sentChats     Chat[]   @relation("ChatSender")
+  receivedChats Chat[]   @relation("ChatReceiver")
+
+}
+
+model Portfolio{
+  id       Int      @id @default(autoincrement())
+  title    String
+  description String
+  image    Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationship
+  userId      Int
+  user        User     @relation("UserPortfolio", fields: [userId], references: [userid])
+}
+
+model Arts{
+  id       Int      @id @default(autoincrement())
+  title    String
+  description String
+  image    Json?
+  price    Float
+  category String
+  status   artStatus
+  isApproved Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationship
+  userId      Int
+  user        User     @relation("UserArts", fields: [userId], references: [userid])
+  carts       Cart[]
+  orders      Order[]
+}
+
+model Wallet{
+  id       Int      @id @default(autoincrement())
+  amount   Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationship
+  userId    Int       @unique
+  user      User      @relation(fields: [userId], references: [userid])
+  sentTransactions     Transaction[] @relation("FromWallet")
+  receivedTransactions Transaction[] @relation("ToWallet")
+}
+
+model Transaction{
+  id       Int      @id @default(autoincrement())
+  amount   Float
+  from_account Int
+  to_account   Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+   // Relationships
+  fromWallet  Wallet   @relation("FromWallet", fields: [from_account], references: [id])
+  toWallet    Wallet   @relation("ToWallet", fields: [to_account], references: [id])
+  user        User?    @relation("UserTransactions", fields: [userId], references: [userid])
+  userId      Int?
+}
+
+model Cart{
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [userid])
+  artId     Int
+  art       Arts     @relation(fields: [artId], references: [id])
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, artId])
+}
+
+model Order{
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [userid])
+  artId     Int
+  art       Arts     @relation(fields: [artId], references: [id])
+  quantity  Int      @default(1)
+  status    String   @default("pending") // pending, completed, cancelled
+  totalPrice Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([artId]) // Each art can only be ordered once
+}
+
+// Chat (for in-app communication):
+model Chat {
+  id         String   @id @default(uuid())
+  senderId   Int
+  receiverId Int
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  sender   User   @relation("ChatSender", fields: [senderId], references: [userid])
+  receiver User   @relation("ChatReceiver", fields: [receiverId], references: [userid])
+
+  @@map("chats")
+}
+
+
+enum userType {
+  BUYER
+  ARTIST
+  ADMIN
+}
+
+enum artStatus {
+  LIVE
+  DRAFT
+  SOLD
+  REJECTED
+}
